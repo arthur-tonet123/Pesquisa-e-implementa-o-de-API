@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Busca de Endereço por CEP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy: #14213D;
+    --navy-2: #0D1730;
+    --paper: #FBF8F1;
+    --red: #C1272D;
+    --blue: #1B4B8F;
+    --ink: #232323;
+    --muted: #6b6558;
+    --line: #d8d2c2;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 20% -10%, #1c2c52 0%, transparent 55%),
+      linear-gradient(180deg, var(--navy) 0%, var(--navy-2) 100%);
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 40px 16px;
+  }
+
+  .page-title{
+    position:absolute;
+    top:28px;
+    left:50%;
+    transform:translateX(-50%);
+    color:#EDE7D8;
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    letter-spacing:0.04em;
+    opacity:0.75;
+    text-align:center;
+  }
+
+  .envelope{
+    position:relative;
+    width:100%;
+    max-width:560px;
+    background: var(--paper);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.45), 0 2px 0 rgba(255,255,255,0.04) inset;
+    border-radius: 4px;
+    overflow:hidden;
+  }
+
+  .stripes{
+    height:14px;
+    background: repeating-linear-gradient(
+      -45deg,
+      var(--red) 0, var(--red) 14px,
+      var(--paper) 14px, var(--paper) 28px,
+      var(--blue) 28px, var(--blue) 42px,
+      var(--paper) 42px, var(--paper) 56px
+    );
+  }
+
+  .envelope-body{
+    padding: 36px 40px 40px;
+  }
+
+  .brand{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 14px;
+    margin-bottom: 26px;
+  }
+
+  .brand h1{
+    font-family:'Special Elite', monospace;
+    font-size: 22px;
+    margin:0;
+    letter-spacing: 0.5px;
+  }
+
+  .brand span{
+    font-size:12px;
+    color: var(--muted);
+  }
+
+  .field-label{
+    font-family:'Special Elite', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 8px;
+    display:block;
+  }
+
+  .search-row{
+    display:flex;
+    gap:10px;
+    margin-bottom: 6px;
+  }
+
+  #cep-input{
+    flex:1;
+    font-family:'Special Elite', monospace;
+    font-size: 20px;
+    letter-spacing: 2px;
+    padding: 12px 14px;
+    border: 2px solid var(--ink);
+    border-radius: 2px;
+    background: #fff;
+    color: var(--ink);
+  }
+
+  #cep-input:focus{
+    outline: none;
+    border-color: var(--blue);
+  }
+
+  #cep-input::placeholder{
+    letter-spacing: 1px;
+    color: #b7b0a0;
+  }
+
+  .stamp-btn{
+    flex-shrink:0;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px dashed var(--red);
+    background: #fff;
+    color: var(--red);
+    font-family:'Special Elite', monospace;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    cursor:pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+
+  .stamp-btn:hover{ background: #fdf1f1; }
+  .stamp-btn:active{ transform: scale(0.94); }
+  .stamp-btn:disabled{ opacity:0.5; cursor:default; transform:none; }
+
+  .hint{
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0 0 22px;
+  }
+
+  #result-area{
+    min-height: 60px;
+  }
+
+  .address-card{
+    border-top: 1px dashed var(--line);
+    padding-top: 20px;
+    animation: type-in 0.25s ease;
+  }
+
+  @keyframes type-in{
+    from{ opacity:0; transform: translateY(4px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+
+  .address-line{
+    display:flex;
+    gap:14px;
+    padding: 7px 0;
+    border-bottom: 1px solid #ece6d6;
+    font-size: 15px;
+  }
+
+  .address-line:last-child{ border-bottom:none; }
+
+  .address-line dt{
+    flex: 0 0 110px;
+    font-family:'Special Elite', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    padding-top:2px;
+  }
+
+  .address-line dd{
+    margin:0;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .address-line dd.empty{
+    font-weight:400;
+    color:#a39c8c;
+    font-style: italic;
+  }
+
+  .message{
+    border-top: 1px dashed var(--line);
+    padding-top: 20px;
+    font-size: 14px;
+    line-height:1.6;
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+  }
+
+  .message .mark{
+    font-family:'Special Elite', monospace;
+    font-size:16px;
+    flex-shrink:0;
+  }
+
+  .message.error{ color: var(--red); }
+  .message.info{ color: var(--muted); }
+
+  .postmark{
+    font-family:'Special Elite', monospace;
+    font-size:11px;
+    color: var(--muted);
+    margin-top: 26px;
+    text-align:right;
+  }
+</style>
+</head>
+<body>
+
+  <div class="page-title">Atividade Avaliativa — Consumo de API pública</div>
+
+  <main class="envelope">
+    <div class="stripes"></div>
+    <div class="envelope-body">
+
+      <div class="brand">
+        <h1>Busca&nbsp;de&nbsp;Endereço</h1>
+        <span>via CEP</span>
+      </div>
+
+      <label class="field-label" for="cep-input">Digite o CEP</label>
+      <div class="search-row">
+        <input
+          id="cep-input"
+          type="text"
+          inputmode="numeric"
+          maxlength="9"
+          placeholder="00000-000"
+          autocomplete="off"
+        >
+        <button class="stamp-btn" id="search-btn" type="button">BUSCAR</button>
+      </div>
+      <p class="hint">Apenas números. Ex.: 01310-100 (Av. Paulista, São Paulo)</p>
+
+      <div id="result-area"></div>
+
+      <div class="postmark">ViaCEP · api pública, sem chave de acesso</div>
+    </div>
+  </main>
+
+<script>
+  const input = document.getElementById('cep-input');
+  const btn = document.getElementById('search-btn');
+  const resultArea = document.getElementById('result-area');
+
+  function renderMessage(text, type){
+    const markChar = type === 'error' ? '✕' : '✎';
+    resultArea.innerHTML = `
+      <div class="message ${type}">
+        <span class="mark">${markChar}</span>
+        <span>${text}</span>
+      </div>
+    `;
+  }
+
+  function renderAddress(data){
+    const fields = [
+      ['CEP', data.cep],
+      ['Rua', data.logradouro],
+      ['Bairro', data.bairro],
+      ['Cidade / UF', data.localidade && data.uf ? `${data.localidade} - ${data.uf}` : ''],
+      ['DDD', data.ddd],
+    ];
+
+    const rows = fields.map(([label, value]) => {
+      const hasValue = value && String(value).trim().length > 0;
+      return `
+        <div class="address-line">
+          <dt>${label}</dt>
+          <dd class="${hasValue ? '' : 'empty'}">${hasValue ? value : 'não informado'}</dd>
+        </div>
+      `;
+    }).join('');
+
+    resultArea.innerHTML = `<dl class="address-card">${rows}</dl>`;
+  }
+
+  async function buscarCep(){
+    const raw = input.value.trim();
+    const digits = raw.replace(/\D/g, '');
+
+    if (digits.length === 0){
+      renderMessage('Digite um CEP para buscar.', 'info');
+      return;
+    }
+
+    if (digits.length !== 8){
+      renderMessage('CEP inválido. Digite os 8 números do CEP, sem letras ou símbolos.', 'error');
+      return;
+    }
+
+    btn.disabled = true;
+    renderMessage('Buscando...', 'info');
+
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${digits}/json/`);
+
+      if (!response.ok){
+        renderMessage('O serviço de CEP não respondeu corretamente. Tente novamente em instantes.', 'error');
+        return;
+      }
+
+      const data = await response.json();
+
+      if (data.erro){
+        renderMessage('CEP não encontrado. Confira os números e tente de novo.', 'error');
+        return;
+      }
+
+      renderAddress(data);
+
+    } catch (err) {
+      renderMessage('Não foi possível conectar ao serviço. Verifique sua internet e tente novamente.', 'error');
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  btn.addEventListener('click', buscarCep);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') buscarCep();
+  });
+  input.addEventListener('input', () => {
+    const digits = input.value.replace(/\D/g, '').slice(0, 8);
+    if (digits.length > 5){
+      input.value = digits.slice(0,5) + '-' + digits.slice(5);
+    } else {
+      input.value = digits;
+    }
+  });
+</script>
+
+</body>
+</html>
