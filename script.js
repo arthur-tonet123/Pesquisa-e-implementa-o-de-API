@@ -149,12 +149,12 @@ async function buscarCep() {
 }
 
 
-/* BOTÃO */
+
 
 btn.addEventListener("click", buscarCep);
 
 
-/* ENTER */
+
 
 input.addEventListener("keydown", function(event) {
 
@@ -167,7 +167,7 @@ input.addEventListener("keydown", function(event) {
 });
 
 
-/* FORMATAÇÃO DO CEP */
+
 
 input.addEventListener("input", function() {
 
