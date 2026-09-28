@@ -1,77 +1,71 @@
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Busca de Endereço por CEP</title>
+    <title>Busca de Endereço por CEP</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <div class="page-title">
-    Atividade Avaliativa — Consumo de API pública
-  </div>
-
-  <main class="envelope">
-
-    <div class="stripes"></div>
-
-    <div class="envelope-body">
-
-      <div class="brand">
-        <h1>Busca&nbsp;de&nbsp;Endereço</h1>
-        <span>via CEP</span>
-      </div>
-
-      <label class="field-label" for="cep-input">
-        Digite o CEP
-      </label>
-
-      <div class="search-row">
-
-        <input
-          id="cep-input"
-          type="text"
-          inputmode="numeric"
-          maxlength="9"
-          placeholder="00000-000"
-          autocomplete="off"
-        >
-
-        <button
-          class="stamp-btn"
-          id="search-btn"
-          type="button"
-        >
-          BUSCAR
-        </button>
-
-      </div>
-
-      <p class="hint">
-        Apenas números. Ex.: 01310-100 (Av. Paulista, São Paulo)
-      </p>
-
-      <div id="result-area"></div>
-
-      <div class="postmark">
-        ViaCEP · api pública, sem chave de acesso
-      </div>
-
+    <div class="titulo-topo">
+        Atividade Avaliativa — Consumo de API pública
     </div>
-  </main>
 
-  <script src="script.js"></script>
+    <main class="container">
+
+        <div class="faixa"></div>
+
+        <section class="conteudo">
+
+            <header class="cabecalho">
+                <div>
+                    <h1>Busca de Endereço</h1>
+                    <p>Consulta por CEP</p>
+                </div>
+
+                <span class="selo">VIA CEP</span>
+            </header>
+
+            <div class="linha"></div>
+
+            <label for="cep-input">Digite o CEP</label>
+
+            <div class="busca">
+
+                <input
+                    type="text"
+                    id="cep-input"
+                    placeholder="00000-000"
+                    maxlength="9"
+                    inputmode="numeric"
+                    autocomplete="off"
+                >
+
+                <button id="search-btn">
+                    BUSCAR
+                </button>
+
+            </div>
+
+            <p class="dica">
+                Digite apenas os números. Exemplo: 01310-100
+            </p>
+
+            <div id="result-area"></div>
+
+            <footer>
+                ViaCEP · API pública · Sem chave de acesso
+            </footer>
+
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
 
 </body>
 </html>
-```
